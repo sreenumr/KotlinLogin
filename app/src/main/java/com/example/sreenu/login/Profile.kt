@@ -3,9 +3,11 @@ package com.example.sreenu.login
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -55,7 +57,7 @@ class Profile : AppCompatActivity() {
         val mUserReference = mDataBaseReference!!.child(mUser!!.uid)
 
         curUserEmail!!.text = mUser.email
-        curUserEmailVerified!!.text = mUser.isEmailVerified.toString()
+        //curUserEmailVerified!!.text = mUser.isEmailVerified.toString()
 
         mUserReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -72,5 +74,8 @@ class Profile : AppCompatActivity() {
         val intent = Intent(this,MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
+        Toast.makeText(this,"Logged Out Successfully",Toast.LENGTH_SHORT).show()
+
+        Log.d(TAG,"Logout:successful")
     }
 }
