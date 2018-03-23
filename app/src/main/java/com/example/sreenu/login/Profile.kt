@@ -1,5 +1,6 @@
 package com.example.sreenu.login
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -15,6 +16,9 @@ class Profile : AppCompatActivity() {
     private var mDataBase:FirebaseDatabase? = null
     private var mAuth:FirebaseAuth? = null
 
+    private val TAG = "Loguot"
+
+
         private var curUser :TextView?=null
         private var curUserEmail :TextView?=null
         private var curUserEmailVerified :TextView?=null
@@ -28,7 +32,8 @@ class Profile : AppCompatActivity() {
 
         logoutButton!!.setOnClickListener {
 
-            mAuth!!.signOut()
+
+            logout()
         }
     }
 
@@ -59,5 +64,13 @@ class Profile : AppCompatActivity() {
             }
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+    }
+
+    private fun logout(){
+
+        mAuth!!.signOut()
+        val intent = Intent(this,MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 }
