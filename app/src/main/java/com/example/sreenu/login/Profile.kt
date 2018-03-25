@@ -57,6 +57,12 @@ class Profile : AppCompatActivity() {
         val mUserReference = mDataBaseReference!!.child(mUser!!.uid)
 
         curUserEmail!!.text = mUser.email
+
+        if(!mUser.isEmailVerified)
+            curUserEmailVerified!!.text = "Email not verified. Please check your mail for verification link"
+        else
+            curUserEmailVerified!!.text = "Email has been verified."
+
         //curUserEmailVerified!!.text = mUser.isEmailVerified.toString()
 
         mUserReference.addValueEventListener(object : ValueEventListener {

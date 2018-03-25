@@ -73,17 +73,23 @@ class MainActivity : AppCompatActivity() {
                     .addOnCompleteListener(this){task ->
                         if(task.isSuccessful){
                             Log.d(TAG, "signInWithEmail:success")
-                            //updateUI()
+                            updateUI()
                         }
                         else{
                             //Failed sign in
                             Log.e(TAG, "signInWithEmail:failure", task.exception)
-                            Toast.makeText(this,"Login Failled",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this,"Login Failed",Toast.LENGTH_SHORT).show()
                         }
                     }
 
         }
         else Toast.makeText(this,"Invalid Details",Toast.LENGTH_SHORT).show()
+    }
+
+    private  fun updateUI(){
+        val intent = Intent(this, Profile::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 
 }
