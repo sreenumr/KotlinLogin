@@ -34,6 +34,7 @@ class Registration : AppCompatActivity() {
     private var etLastName: EditText? = null
     private var etUserName: EditText? = null
     private var etEmail: EditText? = null
+    private var userWallet:String? = null
     private var etPhoneNumber: EditText? = null
     private var etPassword: EditText? = null
     private var btnRegister: Button? = null
@@ -70,12 +71,15 @@ class Registration : AppCompatActivity() {
         btnRegister = findViewById<View>(R.id.btnSignUp) as Button
 
         mProgressBar = ProgressDialog(this)
+
         mDatabase = FirebaseDatabase.getInstance()
+        mDatabaseReference = mDatabase!!.reference!!.child("Users")
         mAuth = FirebaseAuth.getInstance()
         btnRegister!!.setOnClickListener { createNewAccount() }
     }
 
     private fun createNewAccount(){
+
         firstName = etFirstName!!.text.toString()
         lastName = etLastName!!.text.toString()
         userName = etUserName!!.text.toString()
@@ -104,14 +108,19 @@ class Registration : AppCompatActivity() {
 
                             //Verify email fun
 
-                           // verifyEmail()
+                           verifyEmail()
 
                             //update user Profile
                             val currentUserDb = mDatabaseReference!!.child(userId)
                             currentUserDb.child("firstName").setValue(firstName)
                             currentUserDb.child("lastName").setValue(lastName)
+                            currentUserDb.child("userName").setValue(userName)
+                            currentUserDb.child("email").setValue(email)
+                            currentUserDb.child("phoneNumber").setValue(phoneNumber)
+                            currentUserDb.child("password").setValue(password)
+                            currentUserDb.child("userWallet").setValue("0");
 
-                           // updateUser()
+                           updateUser()
                         }
                         else{
                             //Failed sign in
@@ -126,4 +135,31 @@ class Registration : AppCompatActivity() {
             Toast.makeText(this,"Fields are Empty!",Toast.LENGTH_SHORT).show()
         }
     }
+
+private fun updateUser(){
+
+        val intent = Intent(this,Profile::class.java)
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+    }
+
+    private fun verifyEmail() {
+        val mUser = mAuth!!.currentUser
+        mUser!!.sendEmailVerification()
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this,
+                                "Verification email sent to " + mUser.getEmail(),
+                                Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.e(TAG, "sendEmailVerification", task.exception)
+                        Toast.makeText(this,
+                                "Failed to send verification email.",
+                                Toast.LENGTH_SHORT).show()
+                    }
+                }
+    }
+
+
 }

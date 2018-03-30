@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_profile.*
+import org.w3c.dom.Text
 
 class Profile : AppCompatActivity() {
 
@@ -25,6 +26,7 @@ class Profile : AppCompatActivity() {
         private var curUserEmail :TextView?=null
         private var curUserEmailVerified :TextView?=null
         private var logoutButton: Button? = null
+        private var curUserWallet:TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,7 @@ class Profile : AppCompatActivity() {
         curUserEmail = findViewById<View>(R.id.userProEmail) as TextView
         curUserEmailVerified = findViewById<View>(R.id.userProEmailVerify) as TextView
         logoutButton = findViewById<View>(R.id.proLogoutButton) as Button
+        curUserWallet = findViewById<View>(R.id.proWallet) as TextView
     }
 
     override fun onStart() {
@@ -69,6 +72,7 @@ class Profile : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 curUser!!.text = snapshot.child("userName").value as String
                 curUserEmail!!.text = snapshot.child("email").value as String
+                curUserWallet!!.text = snapshot.child("userWallet").value as String
             }
             override fun onCancelled(databaseError: DatabaseError) {}
         })

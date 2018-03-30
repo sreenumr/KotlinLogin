@@ -33,10 +33,11 @@
             />
 
         <EditText
-            android:id="@+id/phoneNumber"
+            android:id="@+id/regPhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Phone Number"
+            android:inputType="phone"
             />
 
         <EditText
@@ -44,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="email"
+            android:inputType="textEmailAddress"
             />
 
         <EditText
@@ -51,13 +53,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="password"
+            android:inputType="textPassword"
             />
 
         <Button
+            android:id="@+id/btnSignUp"
             android:layout_marginTop="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register"
+            android:text="Sign Up"
             />
 
         <TextView
