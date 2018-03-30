@@ -5,8 +5,11 @@ import android.app.VoiceInteractor
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -34,7 +37,6 @@ class Registration : AppCompatActivity() {
     private var etLastName: EditText? = null
     private var etUserName: EditText? = null
     private var etEmail: EditText? = null
-    private var userWallet:String? = null
     private var etPhoneNumber: EditText? = null
     private var etPassword: EditText? = null
     private var btnRegister: Button? = null
@@ -57,6 +59,7 @@ class Registration : AppCompatActivity() {
         }
 
         initialise()
+        validate()
 
     }
 
@@ -79,6 +82,8 @@ class Registration : AppCompatActivity() {
     }
 
     private fun createNewAccount(){
+
+
 
         firstName = etFirstName!!.text.toString()
         lastName = etLastName!!.text.toString()
@@ -125,7 +130,7 @@ class Registration : AppCompatActivity() {
                         else{
                             //Failed sign in
                             Log.w(TAG,"createUserWithEmail:failure",task.exception)
-                            Toast.makeText(this,"Authentication Failed",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this,"User Registration Failed",Toast.LENGTH_SHORT).show()
                         }
 
                     }
@@ -161,5 +166,68 @@ private fun updateUser(){
                 }
     }
 
+    private fun validate(){
+
+        etFirstName!!.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (etFirstName!!.text.toString().isNullOrEmpty())
+                    etFirstName!!.error  = "Empty"
+
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
+        etUserName!!.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (etUserName!!.text.toString().isNullOrEmpty())
+                    etUserName!!.error  = "Empty"
+
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
+        etEmail!!.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (etEmail!!.text.toString().isNullOrEmpty())
+                    etEmail!!.error  = "Empty"
+
+                if(!Patterns.EMAIL_ADDRESS.matcher(etEmail!!.text.toString()).matches())
+                    etEmail!!.error = "Invalid format"
+
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
+        etPassword!!.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (etPassword!!.text.toString().isNullOrEmpty())
+                    etPassword!!.error  = "Empty"
+
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
+    }
 
 }
