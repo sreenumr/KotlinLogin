@@ -3,29 +3,45 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@drawable/background_fence"
     >
 
     <LinearLayout
-        android:layout_margin="20dp"
+        android:layout_margin="5dp"
         android:gravity="center"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content">
 
         <EditText
+            android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:background="@drawable/rounded_background"
+            android:layout_margin="10dp"
             android:id="@+id/regFirstName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:hint="First Name"
             />
 
         <EditText
+            android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:background="@drawable/rounded_background"
+            android:layout_margin="10dp"
             android:id="@+id/regLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Last Name"
             />
         <EditText
+            android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:background="@drawable/rounded_background"
+            android:layout_margin="10dp"
             android:id="@+id/regUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,6 +49,11 @@
             />
 
         <EditText
+            android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:background="@drawable/rounded_background"
+            android:layout_margin="10dp"
             android:id="@+id/regPhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,6 +62,11 @@
             />
 
         <EditText
+            android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:background="@drawable/rounded_background"
+            android:layout_margin="10dp"
             android:id="@+id/regEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,10 +75,27 @@
             />
 
         <EditText
+            android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:background="@drawable/rounded_background"
+            android:layout_margin="10dp"
             android:id="@+id/regPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="password"
+            android:hint="Password"
+            android:inputType="textPassword"
+            />
+        <EditText
+            android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:background="@drawable/rounded_background"
+            android:layout_margin="10dp"
+            android:id="@+id/regConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Confirm Password"
             android:inputType="textPassword"
             />
 
@@ -60,12 +103,17 @@
             android:id="@+id/btnSignUp"
             android:layout_marginTop="25dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:text="Sign Up"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/rounded_background"
             />
 
         <TextView
+            android:textStyle="bold"
+            android:padding="5dp"
             android:autoLink="all"
+            android:textColor="#FFFFFF"
             android:id="@+id/loginText"
             android:layout_margin="20dp"
             android:layout_width="wrap_content"
