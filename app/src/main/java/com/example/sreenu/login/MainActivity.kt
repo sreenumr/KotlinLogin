@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         signUpText.setOnClickListener {
             finish()
             val signUpPage = Intent(this,Registration::class.java)
-
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(signUpPage)
 
         }

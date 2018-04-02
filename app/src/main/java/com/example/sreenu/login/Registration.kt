@@ -75,11 +75,11 @@ class Registration : AppCompatActivity() {
 
         mProgressBar = ProgressDialog(this)
 
-        mDatabase = FirebaseDatabase.getInstance()
-        mDatabaseReference = mDatabase!!.reference!!.child("Users")
-        mAuth = FirebaseAuth.getInstance()
-        btnRegister!!.setOnClickListener { createNewAccount() }
-    }
+    mDatabase = FirebaseDatabase.getInstance()
+    mDatabaseReference = mDatabase!!.reference!!.child("Users")
+    mAuth = FirebaseAuth.getInstance()
+    btnRegister!!.setOnClickListener { createNewAccount() }
+}
 
     private fun createNewAccount(){
 

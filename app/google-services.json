@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "740659377984",
+    "firebase_url": "https://reglogin-c5bf8.firebaseio.com",
+    "project_id": "reglogin-c5bf8",
+    "storage_bucket": "reglogin-c5bf8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740659377984:android:58865bbfae771ec2",
+        "android_client_info": {
+          "package_name": "com.example.sreenu.login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "740659377984-8hoa3hmavbittlefcqikk2qu00t44n0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sreenu.login",
+            "certificate_hash": "8903dac6e6dbca1a3f147a7b038f3b6b8afca60c"
+          }
+        },
+        {
+          "client_id": "740659377984-hekq8qgttjq27nl46lto5bkc5aq09dql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtRUkiOckPH6X_b2WNGnwdPB9uVZwK0lo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "740659377984-hekq8qgttjq27nl46lto5bkc5aq09dql.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
