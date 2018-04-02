@@ -15,8 +15,8 @@
 
         <EditText
             android:padding="5dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="#000000"
+            android:textColorHint="#9e9e9e"
             android:background="@drawable/rounded_background"
             android:layout_margin="10dp"
             android:id="@+id/regFirstName"
@@ -27,8 +27,8 @@
 
         <EditText
             android:padding="5dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="#000000"
+            android:textColorHint="#9e9e9e"
             android:background="@drawable/rounded_background"
             android:layout_margin="10dp"
             android:id="@+id/regLastName"
@@ -38,8 +38,8 @@
             />
         <EditText
             android:padding="5dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="#000000"
+            android:textColorHint="#9e9e9e"
             android:background="@drawable/rounded_background"
             android:layout_margin="10dp"
             android:id="@+id/regUserName"
@@ -50,8 +50,8 @@
 
         <EditText
             android:padding="5dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="#000000"
+            android:textColorHint="#9e9e9e"
             android:background="@drawable/rounded_background"
             android:layout_margin="10dp"
             android:id="@+id/regPhoneNumber"
@@ -63,21 +63,21 @@
 
         <EditText
             android:padding="5dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="#000000"
+            android:textColorHint="#9e9e9e"
             android:background="@drawable/rounded_background"
             android:layout_margin="10dp"
             android:id="@+id/regEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="email"
+            android:hint="Email"
             android:inputType="textEmailAddress"
             />
 
         <EditText
             android:padding="5dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="#000000"
+            android:textColorHint="#9e9e9e"
             android:background="@drawable/rounded_background"
             android:layout_margin="10dp"
             android:id="@+id/regPassword"
@@ -88,8 +88,8 @@
             />
         <EditText
             android:padding="5dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="#000000"
+            android:textColorHint="#9e9e9e"
             android:background="@drawable/rounded_background"
             android:layout_margin="10dp"
             android:id="@+id/regConfirmPassword"
@@ -101,12 +101,14 @@
 
         <Button
             android:id="@+id/btnSignUp"
-            android:layout_marginTop="25dp"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:text="Sign Up"
+            android:textSize="20dp"
+            android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:background="@drawable/rounded_background"
+            android:background="@drawable/button_background"
             />
 
         <TextView
