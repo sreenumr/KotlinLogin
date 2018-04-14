@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.basgeekball.awesomevalidation.AwesomeValidation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     private var etPassword:EditText? = null
     private var loginButton:Button? = null
     private var mProgressBar:ProgressDialog?  = null
-
     private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,11 +35,8 @@ class MainActivity : AppCompatActivity() {
 
 
         signUpText.setOnClickListener {
-            finish()
             val signUpPage = Intent(this,Registration::class.java)
-
             startActivity(signUpPage)
-
         }
 
         initialise()
@@ -77,6 +74,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         else{
                             //Failed sign in
+                            mProgressBar!!.hide()
                             Log.e(TAG, "signInWithEmail:failure", task.exception)
                             Toast.makeText(this,"Login Failed",Toast.LENGTH_SHORT).show()
                         }
