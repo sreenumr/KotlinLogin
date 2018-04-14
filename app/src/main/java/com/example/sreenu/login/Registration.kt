@@ -15,30 +15,36 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.basgeekball.awesomevalidation.AwesomeValidation
+import com.basgeekball.awesomevalidation.ValidationStyle
+import com.basgeekball.awesomevalidation.utility.RegexTemplate
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_registration.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import java.util.regex.Pattern
 
 private val TAG = "CreateAccountActivity"
-
+private var errorMessage:String? = null
 private var firstName: String? = null
 private var lastName : String? = null
 private var userName : String? = null
 private var email : String? = null
 private var phoneNumber : String? = null
 private var password: String? = null
-
+private var confirmPassword: String? = null
 
 class Registration : AppCompatActivity() {
 
+    private var mAwesomeValidation: AwesomeValidation? = null
     private var etFirstName: EditText? = null
     private var etLastName: EditText? = null
     private var etUserName: EditText? = null
     private var etEmail: EditText? = null
     private var etPhoneNumber: EditText? = null
     private var etPassword: EditText? = null
+    private var etConfirmPassword:EditText? = null
     private var btnRegister: Button? = null
     private var mProgressBar: ProgressDialog? = null
 
@@ -50,6 +56,8 @@ class Registration : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
+
+
 
         loginText.setOnClickListener {
             finish()
@@ -72,7 +80,7 @@ class Registration : AppCompatActivity() {
         etPhoneNumber  = findViewById<View>(R.id.regPhoneNumber) as EditText
         etPassword = findViewById<View>(R.id.regPassword) as EditText
         btnRegister = findViewById<View>(R.id.btnSignUp) as Button
-
+        etConfirmPassword = findViewById<View>(R.id.regConfirmPassword) as EditText
         mProgressBar = ProgressDialog(this)
 
     mDatabase = FirebaseDatabase.getInstance()
@@ -91,12 +99,13 @@ class Registration : AppCompatActivity() {
         email = etEmail!!.text.toString()
         phoneNumber = etPhoneNumber!!.text.toString()
         password = etPassword!!.text.toString()
+        confirmPassword = etConfirmPassword!!.text.toString()
 
         if(!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName)
                 && !TextUtils.isEmpty(userName) && !TextUtils.isEmpty(email)
                 && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(phoneNumber)) {
 
-            Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show();
             mProgressBar!!.setMessage("Please Wait...")
             mProgressBar!!.show()
             mAuth!!
@@ -123,14 +132,16 @@ class Registration : AppCompatActivity() {
                             currentUserDb.child("email").setValue(email)
                             currentUserDb.child("phoneNumber").setValue(phoneNumber)
                             currentUserDb.child("password").setValue(password)
-                            currentUserDb.child("userWallet").setValue("0");
+                            currentUserDb.child("userWallet").setValue("Wallet:0");
 
                            updateUser()
                         }
                         else{
                             //Failed sign in
+                            validate()
+                            errorMessage = task.exception!!.localizedMessage.toString()
                             Log.w(TAG,"createUserWithEmail:failure",task.exception)
-                            Toast.makeText(this,"User Registration Failed",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, errorMessage,Toast.LENGTH_SHORT).show()
                         }
 
                     }
@@ -166,6 +177,13 @@ private fun updateUser(){
                 }
     }
 
+//    private fun validate(){
+//        if(!Patterns.EMAIL_ADDRESS.matcher(etEmail!!.text.toString()).matches())
+//                   etEmail!!.error = "Invalid format"
+//        if(!Patterns.PHONE.matcher(etPhoneNumber!!.text.toString()).matches())
+//                    etPhoneNumber!!.error = "Invalid Number"
+//
+//    }
     private fun validate(){
 
         etFirstName!!.addTextChangedListener(object : TextWatcher {
@@ -219,6 +237,8 @@ private fun updateUser(){
                 if (etPassword!!.text.toString().isNullOrEmpty())
                     etPassword!!.error  = "Empty"
 
+                
+
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -227,6 +247,24 @@ private fun updateUser(){
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
+
+        etConfirmPassword!!.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                if (etPassword!!.text.toString() == (etConfirmPassword!!.text.toString()))
+                    etConfirmPassword!!.error  = "Passwords Do Not Match"
+
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (etPassword!!.text.toString() == (etConfirmPassword!!.text.toString()))
+                    etConfirmPassword!!.error  = "Passwords Do Not Match"
+
+            }
+        })
+
 
     }
 
