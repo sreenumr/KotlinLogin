@@ -103,7 +103,7 @@ class Registration : AppCompatActivity() {
 
         if(!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName)
                 && !TextUtils.isEmpty(userName) && !TextUtils.isEmpty(email)
-                && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(phoneNumber)) {
+                && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(phoneNumber) && TextUtils.equals(password,confirmPassword) ) {
 
             //Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show();
             mProgressBar!!.setMessage("Please Wait...")
@@ -136,6 +136,8 @@ class Registration : AppCompatActivity() {
 
                            updateUser()
                         }
+
+
                         else{
                             //Failed sign in
                             validate()
@@ -146,10 +148,17 @@ class Registration : AppCompatActivity() {
 
                     }
         }
-            else {
+
+        else if(!(password!!.equals(confirmPassword) ) && !TextUtils.isEmpty(confirmPassword))
+            Toast.makeText(this,"Passwords do not match",Toast.LENGTH_SHORT).show()
+
+
+        else {
 
             Toast.makeText(this,"Fields are Empty!",Toast.LENGTH_SHORT).show()
         }
+
+
     }
 
 private fun updateUser(){
@@ -188,8 +197,11 @@ private fun updateUser(){
 
         etFirstName!!.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                if (etFirstName!!.text.toString().isNullOrEmpty())
+                if (etFirstName!!.text.toString().isNullOrEmpty()){
                     etFirstName!!.error  = "Empty"
+
+                }
+
 
             }
 
@@ -237,13 +249,21 @@ private fun updateUser(){
                 if (etPassword!!.text.toString().isNullOrEmpty())
                     etPassword!!.error  = "Empty"
 
+               else  if (etPassword!!.toString().length<6)
+                    etPassword!!.error = "Password must be between 6 and 20 letters"
 
             }
+
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                 if (etPassword!!.toString().length<6) {
+                    etPassword!!.error = "Password length must be at least 6"
+
+
+                 }
             }
         })
 
