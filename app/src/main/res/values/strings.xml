@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">CabHire</string>
 
+    <string name="invalid_userName">Empty</string>
+    <string name="invalid_email">Invalid Format</string>
+    <string name="invalid_account">Account with this email already exists</string>
+    <string name="invalid_password">Password length must be between 6 and 20</string>
+    <string name="invalid_username">Username already taken</string>
+    <string name="invalid_phoneNumber">Invalid</string>
+    <string name="unmatched_passwords">Passwords do not match</string>
+    <string name="title_activity_profile_main">profile_main</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
 </resources>

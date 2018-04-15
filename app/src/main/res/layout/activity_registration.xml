@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@drawable/background_fence"
+    android:background="@drawable/taxi_background_2"
     >
 
     <LinearLayout
@@ -49,6 +49,7 @@
             />
 
         <EditText
+            android:maxLength="10"
             android:padding="5dp"
             android:textColor="#000000"
             android:textColorHint="#9e9e9e"
@@ -84,9 +85,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
+            android:maxLength="20"
             android:inputType="textPassword"
             />
         <EditText
+            android:maxLength="20"
             android:padding="5dp"
             android:textColor="#000000"
             android:textColorHint="#9e9e9e"
