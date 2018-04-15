@@ -237,7 +237,6 @@ private fun updateUser(){
                 if (etPassword!!.text.toString().isNullOrEmpty())
                     etPassword!!.error  = "Empty"
 
-                
 
             }
 
@@ -250,16 +249,13 @@ private fun updateUser(){
 
         etConfirmPassword!!.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                if (etPassword!!.text.toString() == (etConfirmPassword!!.text.toString()))
-                    etConfirmPassword!!.error  = "Passwords Do Not Match"
-
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (etPassword!!.text.toString() == (etConfirmPassword!!.text.toString()))
+                if (!(etPassword!!.text.toString().equals(etConfirmPassword!!.text.toString()) ) )
                     etConfirmPassword!!.error  = "Passwords Do Not Match"
 
             }
