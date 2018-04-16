@@ -37,7 +37,6 @@ private var confirmPassword: String? = null
 
 class Registration : AppCompatActivity() {
 
-    private var mAwesomeValidation: AwesomeValidation? = null
     private var etFirstName: EditText? = null
     private var etLastName: EditText? = null
     private var etUserName: EditText? = null
@@ -49,6 +48,8 @@ class Registration : AppCompatActivity() {
     private var mProgressBar: ProgressDialog? = null
 
     //Firebase Refs
+    private var mDatabaseReferencePromoCodes:DatabaseReference? = null
+    private var mDatabaseReferenceWallet :DatabaseReference? = null
     private var mDatabaseReference: DatabaseReference? = null
     private var mDatabase: FirebaseDatabase? = null
     private var mAuth: FirebaseAuth? = null
@@ -85,6 +86,8 @@ class Registration : AppCompatActivity() {
 
     mDatabase = FirebaseDatabase.getInstance()
     mDatabaseReference = mDatabase!!.reference!!.child("Users")
+    mDatabaseReferenceWallet = mDatabase!!.reference!!.child("User Wallet")
+    mDatabaseReferencePromoCodes = mDatabase!!.reference!!.child("Promo Codes")
     mAuth = FirebaseAuth.getInstance()
     btnRegister!!.setOnClickListener { createNewAccount() }
 }
@@ -126,13 +129,15 @@ class Registration : AppCompatActivity() {
 
                             //update user Profile
                             val currentUserDb = mDatabaseReference!!.child(userId)
+                            val currentUserDbWallet = mDatabaseReferenceWallet!!.child(userId)
                             currentUserDb.child("firstName").setValue(firstName)
                             currentUserDb.child("lastName").setValue(lastName)
                             currentUserDb.child("userName").setValue(userName)
                             currentUserDb.child("email").setValue(email)
                             currentUserDb.child("phoneNumber").setValue(phoneNumber)
                             currentUserDb.child("password").setValue(password)
-                            currentUserDb.child("userWallet").setValue("Wallet:0");
+                            currentUserDbWallet.child("userWallet").setValue("0")
+                            currentUserDbWallet.child("userName").setValue(userName)
 
                            updateUser()
                         }
@@ -163,7 +168,7 @@ class Registration : AppCompatActivity() {
 
 private fun updateUser(){
 
-        val intent = Intent(this,Profile::class.java)
+        val intent = Intent(this,profile_main::class.java)
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
