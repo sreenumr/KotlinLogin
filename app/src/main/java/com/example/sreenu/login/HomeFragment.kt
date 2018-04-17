@@ -8,6 +8,9 @@ import android.view.ViewGroup
 
 class HomeFragment:Fragment(){
 
+//    var mMapView: MapView? = null
+//    private val googleMap: GoogleMap? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home,null)
     }
