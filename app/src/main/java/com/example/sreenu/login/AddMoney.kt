@@ -4,9 +4,11 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 
 
 class AddMoney : AppCompatActivity() {
@@ -27,8 +29,14 @@ class AddMoney : AppCompatActivity() {
 
         continueButton!!.setOnClickListener{
 
+            if(isValidAmount()){
             val cardDetailsPage = Intent(this,CardDetails::class.java)
             startActivity(cardDetailsPage )
+            }
+
+            else{
+                Toast.makeText(this,"Enter a valid amount",Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -39,8 +47,6 @@ class AddMoney : AppCompatActivity() {
             if (etEnterAmount!!.text.toString().isNullOrEmpty()){
                 etEnterAmount!!.error  = "Empty"
 
-            if(etEnterAmount!!.text.toString().toInt()>=2000)
-                etEnterAmount!!.error = "Should be less than or equal to 2000"
 
             }
 
@@ -55,5 +61,13 @@ class AddMoney : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun isValidAmount():Boolean{
+
+        if(etEnterAmount!!.text.toString().toInt()==0||etEnterAmount!!.text.isNullOrEmpty())
+            return false
+        else
+            return true
     }
 }
