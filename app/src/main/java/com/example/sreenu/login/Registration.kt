@@ -61,10 +61,9 @@ class Registration : AppCompatActivity() {
 
 
         loginText.setOnClickListener {
+//            val loginPage = Intent(this,MainActivity::class.java)
+//            startActivity(loginPage)
             finish()
-            val loginPage = Intent(this,MainActivity::class.java)
-            startActivity(loginPage)
-
         }
 
         initialise()
