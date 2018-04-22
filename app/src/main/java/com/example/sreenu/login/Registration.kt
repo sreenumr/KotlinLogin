@@ -6,6 +6,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
@@ -83,6 +84,9 @@ class Registration : AppCompatActivity() {
         etConfirmPassword = findViewById<View>(R.id.regConfirmPassword) as EditText
         mProgressBar = ProgressDialog(this)
 
+
+    etPhoneNumber!!.setSelection(etPhoneNumber!!.length())
+
     mDatabase = FirebaseDatabase.getInstance()
     mDatabaseReference = mDatabase!!.reference!!.child("Users")
     mDatabaseReferenceWallet = mDatabase!!.reference!!.child("User Wallet")
@@ -92,8 +96,6 @@ class Registration : AppCompatActivity() {
 }
 
     private fun createNewAccount(){
-
-
 
         firstName = etFirstName!!.text.toString()
         lastName = etLastName!!.text.toString()
@@ -105,7 +107,7 @@ class Registration : AppCompatActivity() {
 
         if(!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName)
                 && !TextUtils.isEmpty(userName) && !TextUtils.isEmpty(email)
-                && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(phoneNumber) && TextUtils.equals(password,confirmPassword) ) {
+                && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(phoneNumber) && TextUtils.equals(password,confirmPassword) && phoneNumber!!.length==10 ) {
 
             //Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show();
             mProgressBar!!.setMessage("Please Wait...")
@@ -151,7 +153,11 @@ class Registration : AppCompatActivity() {
                         }
 
                     }
+
         }
+
+        else if (!(phoneNumber!!.length==10))
+            Toast.makeText(this,"Phone Number Invalid",Toast.LENGTH_SHORT).show()
 
         else if(!(password!!.equals(confirmPassword) ) && !TextUtils.isEmpty(confirmPassword))
             Toast.makeText(this,"Passwords do not match",Toast.LENGTH_SHORT).show()
@@ -263,11 +269,6 @@ private fun updateUser(){
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                 if (etPassword!!.toString().length<6) {
-                    etPassword!!.error = "Password length must be at least 6"
-
-
-                 }
             }
         })
 
@@ -285,11 +286,28 @@ private fun updateUser(){
             }
         })
 
+    etPhoneNumber!!.addTextChangedListener(object : TextWatcher {
+        override fun afterTextChanged(p0: Editable?) {
+
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            if ((etPhoneNumber!!.text.toString().length<10 ) ){
+                etPhoneNumber!!.error = "Must be length 10"
+            }
+
+        }
+    })
 
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
+
 
 }
+
+
+
