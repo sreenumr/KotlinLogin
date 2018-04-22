@@ -253,8 +253,8 @@ private fun updateUser(){
                 if (etPassword!!.text.toString().isNullOrEmpty())
                     etPassword!!.error  = "Empty"
 
-               else  if (etPassword!!.toString().length<6)
-                    etPassword!!.error = "Password must be between 6 and 20 letters"
+               else  if (etPassword!!.text.toString().length<6)
+                    etPassword!!.error = "Too short"
 
             }
 
