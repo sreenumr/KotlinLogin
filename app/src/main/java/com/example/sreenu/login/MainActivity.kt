@@ -29,7 +29,7 @@ private  var toast:Toast?=null
 
 class MainActivity : AppCompatActivity() {
 
-    private var rootRef = FirebaseDatabase.getInstance().getReference()
+
     private var query :Query?=null
 
     private val TAG = "Login"
@@ -41,10 +41,18 @@ class MainActivity : AppCompatActivity() {
     private var mProgressBar:ProgressDialog?  = null
     private var mAuth: FirebaseAuth? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if(FirebaseAuth.getInstance().currentUser!=null)
+         {
+             finish()
+             val goToProfile = Intent(this,profile_main::class.java)
+                startActivity(goToProfile)
+
+            }
 
         signUpText.setOnClickListener {
             val signUpPage = Intent(this,Registration::class.java)
@@ -52,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         initialise()
+        mProgressBar!!.hide()
 
     }
 
@@ -65,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
         loginButton!!.setOnClickListener {
 
-            if(isOnline())
+            if(hasNetwork())
             loginUser()
 
             else {
@@ -95,6 +104,7 @@ class MainActivity : AppCompatActivity() {
                         if(task.isSuccessful){
                             Log.d(TAG, "signInWithEmail:success")
                             updateUI()
+                            mProgressBar!!.hide()
                         }
                         else{
                             //Failed sign in
@@ -114,10 +124,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun isOnline(): Boolean {
+    private fun hasNetwork(): Boolean {
         val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = cm.activeNetworkInfo
-         if (netInfo != null && netInfo.isConnectedOrConnecting)
+         if (netInfo != null && netInfo.isConnected)
            return  true
          else
             return false
@@ -125,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkConnection() {
-        if (isOnline()) {
+        if (hasNetwork()) {
             Toast.makeText(this, "You are connected to Internet", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "You are not connected to Internet", Toast.LENGTH_SHORT).show()
