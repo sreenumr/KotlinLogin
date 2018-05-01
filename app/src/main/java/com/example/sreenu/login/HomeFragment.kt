@@ -7,14 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.Manifest
 import android.view.ViewGroup
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.MapsInitializer
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.OnMapReadyCallback
 import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
@@ -26,16 +21,23 @@ import java.security.Permissions
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
+import android.support.annotation.NonNull
 import android.text.InputType
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
+import com.google.android.gms.maps.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home_map.*
 
 private const val  PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+private var requestCode:Int?=null;
 
-class HomeFragment:Fragment(){
+class HomeFragment:Fragment() {
 
       var mMapView: MapView? = null
       private var googleMap: GoogleMap? = null
@@ -44,12 +46,14 @@ class HomeFragment:Fragment(){
       private var mWhereTo:Button?=null
       private var mStartLocation:EditText?=null
       private var mEndLocation:EditText?=null
+      private var mGoogleApiClient: GoogleApiClient?=null
+      private var mapFragment:HomeFragment?=null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val myInflatedMapView =  inflater.inflate(R.layout.fragment_home,null)
-
-
+//            mapFragment = m
+//                    .findFragmentById(R.id.map) as HomeFragment
 
         // Construct a GeoDataClient.
        val  mGeoDataClient = Places.getGeoDataClient(context!!)
@@ -61,11 +65,11 @@ class HomeFragment:Fragment(){
         val mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context!!)
 
        // mCurrentLocation = myInflatedMapView.findViewById(R.id.current_location)
-        mWhereTo = myInflatedMapView.findViewById(R.id.where_to_button)
-        mMapView = myInflatedMapView.findViewById(R.id.mapView)
-        mMapView!!.onCreate(savedInstanceState)
+          mWhereTo = myInflatedMapView.findViewById(R.id.where_to_button)
+          mMapView = myInflatedMapView.findViewById(R.id.mapView)
+          mMapView!!.onCreate(savedInstanceState)
 
-        mMapView!!.onResume(); // needed to get the map to display immediately
+        //mMapView!!.onResume(); // needed to get the map to display immediately
 
         try {
             MapsInitializer.initialize(activity!!.applicationContext)
@@ -73,13 +77,23 @@ class HomeFragment:Fragment(){
             e.printStackTrace()
         }
 
+//
+        mWhereTo!!.setOnClickListener {
+
+            getDestination()
+        }
+
+        getDestination()
+        getLocationPermission()
+//        mapFragment!!.getMapAsync(this)
+
         mMapView!!.getMapAsync(OnMapReadyCallback { mMap ->
             googleMap = mMap
 
             // For showing a move to my location button
 
-
-           // googleMap!!.isMyLocationEnabled = true
+            getLocationPermission()
+            // googleMap!!.isMyLocationEnabled = true
 
             // For dropping a marker at a point on the Map
             val amrita  = LatLng(9.0936997, 76.49149549999993)
@@ -90,20 +104,9 @@ class HomeFragment:Fragment(){
             googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
         })
 
-//        mCurrentLocation!!.setOnClickListener {
-//            getCurrentLocation()
-//        }
-
-        mWhereTo!!.setOnClickListener {
-
-            getDestination()
-        }
-
-        getDestination()
-       getLocationPermission()
-
         return myInflatedMapView
     }
+
 
 
     override fun onResume() {
@@ -138,7 +141,7 @@ class HomeFragment:Fragment(){
             mStartLocation = EditText(context)
             mStartLocation!!.hint="From"
             mStartLocation!!.inputType = InputType.TYPE_CLASS_TEXT
-            linearLayout!!.addView(mStartLocation)
+            linearLayout.addView(mStartLocation)
 
 
             mEndLocation = EditText(context)
@@ -167,6 +170,10 @@ class HomeFragment:Fragment(){
         dialog.show()
     }
 
+//    private fun requestPermission(permissionType:String , requestCode: Int){
+//        ActivityCompat.requestPermissions(activity!!, arrayOf(permissionType),requestCode)
+//    }
+
     private fun getLocationPermission() {
         /*
      * Request location permission, so that we can get the location of the
@@ -177,7 +184,8 @@ class HomeFragment:Fragment(){
                         context!!,
                         android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            mLocationPermissionGranted = true;
+                googleMap?.isMyLocationEnabled =true
+            mLocationPermissionGranted = true
         } else {
             ActivityCompat.requestPermissions(activity!!,
                     arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
@@ -186,31 +194,25 @@ class HomeFragment:Fragment(){
         }
 
     override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
+                                            permissions: Array<out String>,
+                                            grantResults: IntArray) {
 
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+        when (requestCode){
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION ->{
+                if(grantResults.isEmpty()||grantResults[0]!=PackageManager.PERMISSION_GRANTED){
+
+                    Toast.makeText(context,"Unable to show location - need permission", Toast.LENGTH_SHORT).show()
 
                 }
-                return
-            }
 
-        // Add other 'when' lines to check for other
-        // permissions this app might request.
+                else{
 
-            else -> {
-                // Ignore all other requests.
+                    Toast.makeText(context,"Permission granted", Toast.LENGTH_SHORT).show()
+
+                }
             }
-        }
         }
     }
+
+}
