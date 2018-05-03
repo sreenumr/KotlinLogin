@@ -5,8 +5,10 @@
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
+         location permissions for the 'MyLocation' functionality.
     -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -16,16 +18,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Registration" />
-        <activity android:name=".Profile" />
         <activity
+            android:name=".Registration"
+            android:launchMode="singleInstance" />
+        <activity
+            android:configChanges="orientation|screenSize"
             android:name=".profile_main"
             android:label="@string/title_activity_profile_main"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -39,12 +45,15 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+
+        <activity android:name=".AddMoney" />
+        <activity android:name=".CardDetails" />
+        <activity android:name=".AdminActivity"></activity>
     </application>
 
 </manifest>
