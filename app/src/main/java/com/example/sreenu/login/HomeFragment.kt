@@ -46,7 +46,6 @@ private var mLocationRequest:LocationRequest?=null
 private var mGoogleApiClient:GoogleApiClient?=null
 private var destination:String?=null
 private var geocoder:Geocoder?=null
-private var marker:Marker?=null
 
 private const  val TAG = "search"
 
@@ -111,7 +110,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
             getLocationPermission()
 
             val amrita  = LatLng(9.0936997, 76.49149549999993)
-            googleMap!!.addMarker(MarkerOptions().position(amrita).title("Marker Title").snippet("Marker Description"))
+            //googleMap!!.addMarker(MarkerOptions().position(amrita).title("Marker Title").snippet("Marker Description"))
 
             // For zooming automatically to the location of the marker
             val cameraPosition = CameraPosition.Builder().target(amrita).zoom(12f).build()
@@ -129,6 +128,8 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 //
 //    }
 
+    private var marker:Marker?=null
+
     private fun onSearch(){
 
         val searchLocation = etSearchLocation!!.text.toString()
@@ -145,15 +146,21 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 
             if(addressList!!.size>0){
 
+
+                marker?.remove()
                 address = addressList!!.get(0)
 
                 val latLng  = LatLng(address!!.latitude,address!!.longitude)
 
+                //Log.i("marker",markers!!.size)
+
                     //markers!!.clear()
 
-
+                //markers!!.clear()
                 marker = googleMap!!.addMarker(MarkerOptions().position(latLng))
-                markers!!.add(marker!!)
+
+               // markers?.add(marker)
+
                 googleMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             }
 
