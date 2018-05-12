@@ -1,11 +1,10 @@
 package com.example.sreenu.login
 
-import android.Manifest.permission.ACCESS_FINE_LOCATION
+
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.Manifest
 import android.view.ViewGroup
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MarkerOptions
@@ -13,41 +12,57 @@ import com.google.android.gms.maps.model.LatLng
 import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
-import android.widget.Toast
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.Places
-import java.security.Permission
-import java.security.Permissions
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.support.annotation.NonNull
+import android.app.FragmentManager
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
+import android.nfc.Tag
+import android.support.v7.widget.CardView
 import android.text.InputType
+import android.text.TextUtils
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.*
+import com.directions.route.RoutingListener
+import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.LocationListener
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.places.Place
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment
+import com.google.android.gms.location.places.ui.PlaceSelectionListener
 import com.google.android.gms.maps.*
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home_map.*
+import com.google.android.gms.maps.model.Marker
+import java.io.IOException
 
 private const val  PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-private var requestCode:Int?=null;
+private var googleMap: GoogleMap? = null
+private var mMapView: MapView? = null
+private var mLastloction:Location?=null
+private var mLocationRequest:LocationRequest?=null
+private var mGoogleApiClient:GoogleApiClient?=null
+private var destination:String?=null
+private var geocoder:Geocoder?=null
+private var marker:Marker?=null
 
-class HomeFragment:Fragment() {
+private const  val TAG = "search"
 
-      var mMapView: MapView? = null
-      private var googleMap: GoogleMap? = null
+class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
+
+
+      private var searchAddress:CardView?=null
       private var mLocationPermissionGranted:Boolean? =null
       private var mCurrentLocation:Button?=null
       private var mWhereTo:Button?=null
       private var mStartLocation:EditText?=null
       private var mEndLocation:EditText?=null
-      private var mGoogleApiClient: GoogleApiClient?=null
-      private var mapFragment:HomeFragment?=null
+      private var etSearchLocation:EditText?=null
+      private var addressList:List<Address>?=null
+      private var address:Address?=null
+      private var markers:ArrayList<Marker>?=null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -61,13 +76,14 @@ class HomeFragment:Fragment() {
         // Construct a PlaceDetectionClient.
        val mPlaceDetectionClient = Places.getGeoDataClient(context!!)
 
-        // Construct a FusedLocationProviderClient.
-        val mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context!!)
-
        // mCurrentLocation = myInflatedMapView.findViewById(R.id.current_location)
           mWhereTo = myInflatedMapView.findViewById(R.id.where_to_button)
           mMapView = myInflatedMapView.findViewById(R.id.mapView)
-          mMapView!!.onCreate(savedInstanceState)
+          etSearchLocation = myInflatedMapView.findViewById(R.id.search_text)
+          //searchAddress = myInflatedMapView.findViewById(R.id.search_address)
+
+
+                  mMapView!!.onCreate(savedInstanceState)
 
         //mMapView!!.onResume(); // needed to get the map to display immediately
 
@@ -77,37 +93,108 @@ class HomeFragment:Fragment() {
             e.printStackTrace()
         }
 
-//
+
+
         mWhereTo!!.setOnClickListener {
 
-            getDestination()
+            onSearch()
         }
 
         getDestination()
         getLocationPermission()
-//        mapFragment!!.getMapAsync(this)
+
+       // onClickMap()
 
         mMapView!!.getMapAsync(OnMapReadyCallback { mMap ->
             googleMap = mMap
 
-            // For showing a move to my location button
-
             getLocationPermission()
-            // googleMap!!.isMyLocationEnabled = true
 
-            // For dropping a marker at a point on the Map
             val amrita  = LatLng(9.0936997, 76.49149549999993)
             googleMap!!.addMarker(MarkerOptions().position(amrita).title("Marker Title").snippet("Marker Description"))
 
             // For zooming automatically to the location of the marker
             val cameraPosition = CameraPosition.Builder().target(amrita).zoom(12f).build()
             googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
         })
 
         return myInflatedMapView
+
+
+    }
+
+//    private fun onClickMap{
+//
+//
+//    }
+
+    private fun onSearch(){
+
+        val searchLocation = etSearchLocation!!.text.toString()
+            Log.i("searchLocation",searchLocation)
+            //Log.i("address",geocoder!!.getFromLocationName(searchLocation,1).get(0).toString())
+
+        geocoder = Geocoder(context)
+
+        try {
+            addressList =  geocoder!!.getFromLocationName(searchLocation,1)
+        }catch (e:NullPointerException){
+            e.printStackTrace()
+        }
+
+            if(addressList!!.size>0){
+
+                address = addressList!!.get(0)
+
+                val latLng  = LatLng(address!!.latitude,address!!.longitude)
+
+                    //markers!!.clear()
+
+
+                marker = googleMap!!.addMarker(MarkerOptions().position(latLng))
+                markers!!.add(marker!!)
+                googleMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+            }
+
+            else
+                Toast.makeText(context,"Invalid input Location",Toast.LENGTH_SHORT).show()
+
+    }
+    override fun onLocationChanged(location: Location?) {
+
+//        val mGoogleApiClient = GoogleApiClient.Builder(context!!)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build()
+//        mGoogleApiClient.connect()
+
+        mLastloction = location
+
+        val latLng  = LatLng(location!!.latitude,location!!.longitude)
+        googleMap!!.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+        googleMap!!.animateCamera(CameraUpdateFactory.zoomTo(11f))
+
+
     }
 
 
+    override fun onConnected(p0: Bundle?) {
+        mLocationRequest!!.setInterval(1000)
+        mLocationRequest!!.setFastestInterval(1000)
+        mLocationRequest!!.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+
+        if (ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            googleMap?.isMyLocationEnabled =true
+            mLocationPermissionGranted = true
+
+        } else { ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+        }
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,this)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -129,6 +216,11 @@ class HomeFragment:Fragment() {
         mMapView!!.onLowMemory()
     }
 
+    override fun onConnectionSuspended(p0: Int) {
+    }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+    }
 
     private fun getDestination(){
 
@@ -170,10 +262,6 @@ class HomeFragment:Fragment() {
         dialog.show()
     }
 
-//    private fun requestPermission(permissionType:String , requestCode: Int){
-//        ActivityCompat.requestPermissions(activity!!, arrayOf(permissionType),requestCode)
-//    }
-
     private fun getLocationPermission() {
         /*
      * Request location permission, so that we can get the location of the
@@ -207,12 +295,12 @@ class HomeFragment:Fragment() {
                 }
 
                 else{
-
                     Toast.makeText(context,"Permission granted", Toast.LENGTH_SHORT).show()
 
                 }
             }
         }
     }
+
 
 }
