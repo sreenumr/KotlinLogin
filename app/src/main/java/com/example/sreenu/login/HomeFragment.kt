@@ -47,6 +47,9 @@ private var mLocationRequest:LocationRequest?=null
 private var mGoogleApiClient:GoogleApiClient?=null
 private var destination:String?=null
 private var geocoder:Geocoder?=null
+private var currentLocation:Location?=null
+
+private var results = FloatArray(10)
 
 private const  val TAG = "search"
 
@@ -136,11 +139,25 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 //    }
 
 
+    private fun getDistance(){
+
+        currentLocation = googleMap!!.myLocation
+        val startLat = currentLocation!!.latitude
+        val startLong = currentLocation!!.longitude
+        val endLat = marker!!.position.latitude
+        val endLong = marker!!.position.longitude
+
+         Location.distanceBetween(startLat,startLong,endLat,endLong,results)
+
+        Toast.makeText(context,"Distance: " + results[0], Toast.LENGTH_SHORT).show()
+    }
+
+
     private fun callCab(){
-
-        if(marker!=null)
+        if(marker!=null) {
             //Toast.makeText(context,"call cab",Toast.LENGTH_SHORT).show()
-
+            getDistance()
+        }
         else
             Toast.makeText(context,"Enter or Search a Location",Toast.LENGTH_SHORT).show()
     }
@@ -155,32 +172,33 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 
         geocoder = Geocoder(context)
 
-        try {
-            addressList =  geocoder!!.getFromLocationName(searchLocation,1)
-        }catch (e:NullPointerException){
-            e.printStackTrace()
-        }
+        if(!searchLocation.isNullOrEmpty()) {
+            try {
+                addressList = geocoder!!.getFromLocationName(searchLocation, 1)
+            } catch (e: IOException) {
+                Toast.makeText(context, "Enter a location", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
 
-            if(addressList!!.size>0){
-
-
+            if (addressList!!.isNotEmpty()) {
+                
                 marker?.remove()
                 address = addressList!!.get(0)
 
-                val latLng  = LatLng(address!!.latitude,address!!.longitude)
+                val latLng = LatLng(address!!.latitude, address!!.longitude)
 
                 //Log.i("marker",markers!!.size)
 
-                    //markers!!.clear()
+                //markers!!.clear()
 
                 //markers!!.clear()
                 marker = googleMap!!.addMarker(MarkerOptions().position(latLng))
 
-               // markers?.add(marker)
+                // markers?.add(marker)
 
                 googleMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             }
-
+        }
             else
                 Toast.makeText(context,"Invalid input Location",Toast.LENGTH_SHORT).show()
 
