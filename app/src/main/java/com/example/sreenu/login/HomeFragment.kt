@@ -36,6 +36,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment
 import com.google.android.gms.location.places.ui.PlaceSelectionListener
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.Marker
+import kotlinx.android.synthetic.main.fragment_home.*
 import java.io.IOException
 
 private const val  PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -62,6 +63,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
       private var addressList:List<Address>?=null
       private var address:Address?=null
       private var markers:ArrayList<Marker>?=null
+      private var callCabButton:Button?=null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -79,6 +81,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
           mWhereTo = myInflatedMapView.findViewById(R.id.where_to_button)
           mMapView = myInflatedMapView.findViewById(R.id.mapView)
           etSearchLocation = myInflatedMapView.findViewById(R.id.search_text)
+          callCabButton = myInflatedMapView.findViewById(R.id.call_cab)
           //searchAddress = myInflatedMapView.findViewById(R.id.search_address)
 
 
@@ -99,7 +102,11 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
             onSearch()
         }
 
-        getDestination()
+        callCabButton!!.setOnClickListener{
+            callCab()
+        }
+
+        //getDestination()
         getLocationPermission()
 
        // onClickMap()
@@ -127,6 +134,16 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 //
 //
 //    }
+
+
+    private fun callCab(){
+
+        if(marker!=null)
+            //Toast.makeText(context,"call cab",Toast.LENGTH_SHORT).show()
+
+        else
+            Toast.makeText(context,"Enter or Search a Location",Toast.LENGTH_SHORT).show()
+    }
 
     private var marker:Marker?=null
 
