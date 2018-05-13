@@ -42,6 +42,10 @@ class CardDetails : AppCompatActivity() {
     private var  mUserId = mUser!!.uid
     private var  mUserWalletMoney:String?=null
     private var  mUserWalletMoneyInt:Int?=null
+    private var  totalAmount:Int?=null
+
+    private var bundle:Bundle?=null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,11 +89,20 @@ class CardDetails : AppCompatActivity() {
 
     private fun updateWallet(){
 
-        mUserWallet.addValueEventListener(object :ValueEventListener{
+        bundle = intent.extras
+        var temp = bundle!!.getString("money")
+        Log.i("bundleMoney","temp : " + temp)
+
+
+        mUserWallet.addListenerForSingleValueEvent(object :ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot?) {
                  mUserWalletMoney = snapshot!!.child("userWallet").value as String
                 Log.i("money",mUserWalletMoney)
-                Toast.makeText(this@CardDetails,mUserWalletMoney,Toast.LENGTH_SHORT).show()
+                mUserWalletMoneyInt = mUserWalletMoney!!.toInt()
+                mUserWalletMoneyInt = mUserWalletMoneyInt!!.plus(temp.toInt())
+                mUserWallet.child("userWallet").setValue(mUserWalletMoneyInt.toString())
+
+                // Toast.makeText(this@CardDetails,mUserWalletMoney,Toast.LENGTH_SHORT).show()
             }
 
             override fun onCancelled(snapshot: DatabaseError?) {
@@ -98,9 +111,10 @@ class CardDetails : AppCompatActivity() {
         })
 
 
+
+        //Log.i("bundleMoney","DataBase wallet : " + mUserWalletMoneyInt)
+            //mUserWallet.child("userName").setValue(mUser)
         //mUserWallet.child("userWallet").setValue(mUserWallet.child("userWallet") )
-        mUserWalletMoneyInt = mUserWalletMoney!!.toInt()
-        //val temp = mUserWalletMoneyInt +
 
     }
 }
