@@ -1,19 +1,24 @@
 package com.example.sreenu.login
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import org.w3c.dom.Text
+import java.util.zip.Inflater
 
 private var mDataBaseReference: DatabaseReference? = null
 private var mDataBase: FirebaseDatabase? = null
@@ -27,6 +32,8 @@ class ProfileFragment : Fragment() {
     private var profileName: TextView?=null
     private var passwordResetButton:Button?=null
     private var myInflatedProfileView:View?=null
+    private var password:String?=null
+    private var passwordText:String?=null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -35,11 +42,11 @@ class ProfileFragment : Fragment() {
          profileName = myInflatedProfileView!!.findViewById(R.id.profile_name) as TextView
          passwordResetButton = myInflatedProfileView!!.findViewById(R.id.password_reset_button) as Button
 
-        mAuth = FirebaseAuth.getInstance()
+         mAuth = FirebaseAuth.getInstance()
+         mProgressBar = ProgressDialog(context)
+         initialise()
 
-        initialise()
-
-        passwordResetButton!!.setOnClickListener {
+         passwordResetButton!!.setOnClickListener {
 
             mProgressBar!!.setMessage("Please Wait..")
             mProgressBar!!.show()
@@ -71,27 +78,81 @@ class ProfileFragment : Fragment() {
 
     private fun resetPassword(){
 
-        val emailAddress = mAuth!!.currentUser!!.email
+        showResetPasswordDialogBox()
+    }
+
+    private fun showResetPasswordDialogBox(){
+
+        val addAmountDialog = AlertDialog.Builder(activity)
+
+        val mView = layoutInflater.inflate(R.layout.newpassworddialog,null)
+        val password = mView.findViewById(R.id.dialog_new_password) as EditText
+        val confirmButton = mView.findViewById(R.id.new_password_confirm_button)as Button
+        val cancelButton = mView.findViewById(R.id.cancel_button) as Button
+
+        val dialog = addAmountDialog.create()
+        dialog.setView(mView)
+        dialog.show()
+
+        val mUser = mAuth!!.currentUser
         user = FirebaseAuth.getInstance().currentUser
 
-        //val password = user.
+        confirmButton.setOnClickListener {
 
-        //Log.i("email" , "Reset Email : " + emailAddress)
-        mAuth!!.sendPasswordResetEmail(emailAddress!!).addOnCompleteListener{task ->
+            passwordText = password.text.toString()
 
-            if(task.isSuccessful){
-                mProgressBar!!.hide()
-                Toast.makeText(context,R.string.reset_password_verification,Toast.LENGTH_SHORT).show()
-                Toast.makeText(context,R.string.re_login,Toast.LENGTH_SHORT).show()
-                mAuth!!.signOut()
-               // mDataBaseReference!!.child(m)
+            mUser!!.updatePassword(passwordText!!).addOnCompleteListener { task ->
+                if(task.isSuccessful)
+                {   mProgressBar!!.hide()
+                    Toast.makeText(context,R.string.updated_password,Toast.LENGTH_SHORT).show()
+                }
+
+                else{
+                    mProgressBar!!.hide()
+                    Toast.makeText(context,task.exception!!.localizedMessage.toString(),Toast.LENGTH_SHORT).show()
+                }
             }
-            else{
-                mProgressBar!!.hide()
-                Toast.makeText(context,R.string.reset_password_verification_failed,Toast.LENGTH_SHORT).show()
+
+
             }
 
+            mProgressBar!!.hide()
+            Toast.makeText(context,"Success", Toast.LENGTH_SHORT).show()
+        
+
+        cancelButton.setOnClickListener {
+            dialog.hide()
+            mProgressBar!!.hide()
         }
 
     }
-}
+
+
+
+//        with(addAmountDialog){
+//
+//            newPassword = EditText(context)
+//            newPassword!!.hint="Enter new Password"
+//            newPassword!!.inputType = InputType.TYPE_CLASS_TEXT
+//
+//
+//
+//            setPositiveButton("Done"){
+//                dialog, which ->
+//                dialog.dismiss()
+//                //mySnackbar!!.show()
+//                Toast.makeText(context,"Success", Toast.LENGTH_SHORT).show()
+//
+//            }
+//
+//            setNegativeButton("Cancel"){
+//                dialog, which ->
+//                //Do nothing
+//                dialog.dismiss()
+//
+//            }
+        }
+
+
+
+
