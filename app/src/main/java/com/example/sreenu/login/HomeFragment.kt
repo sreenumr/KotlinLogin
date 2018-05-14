@@ -16,10 +16,16 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.Places
 import android.app.AlertDialog
 import android.app.FragmentManager
+import android.content.Context
+import android.content.Context.LOCATION_SERVICE
+import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.nfc.Tag
+import android.provider.Settings
 import android.support.v7.widget.CardView
 import android.text.InputType
 import android.text.TextUtils
@@ -48,6 +54,7 @@ private var mGoogleApiClient:GoogleApiClient?=null
 private var destination:String?=null
 private var geocoder:Geocoder?=null
 private var currentLocation:Location?=null
+private var locationManager:LocationManager?=null
 
 private var results = FloatArray(10)
 
@@ -71,14 +78,6 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val myInflatedMapView =  inflater.inflate(R.layout.fragment_home,null)
-//            mapFragment = m
-//                    .findFragmentById(R.id.map) as HomeFragment
-
-        // Construct a GeoDataClient.
-       val  mGeoDataClient = Places.getGeoDataClient(context!!)
-
-        // Construct a PlaceDetectionClient.
-       val mPlaceDetectionClient = Places.getGeoDataClient(context!!)
 
        // mCurrentLocation = myInflatedMapView.findViewById(R.id.current_location)
           mWhereTo = myInflatedMapView.findViewById(R.id.where_to_button)
@@ -87,10 +86,9 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
           callCabButton = myInflatedMapView.findViewById(R.id.call_cab)
           //searchAddress = myInflatedMapView.findViewById(R.id.search_address)
 
+          mMapView!!.onCreate(savedInstanceState)
 
-                  mMapView!!.onCreate(savedInstanceState)
 
-        //mMapView!!.onResume(); // needed to get the map to display immediately
 
         try {
             MapsInitializer.initialize(activity!!.applicationContext)
@@ -106,13 +104,20 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
         }
 
         callCabButton!!.setOnClickListener{
-            callCab()
+            if(!isGPSEnabled())
+                locationDialog()
+            else
+                callCab()
         }
 
         //getDestination()
         getLocationPermission()
 
        // onClickMap()
+
+        //Show location enable dialog
+        if(!isGPSEnabled())
+            locationDialog()
 
         mMapView!!.getMapAsync(OnMapReadyCallback { mMap ->
             googleMap = mMap
@@ -125,7 +130,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
             // For zooming automatically to the location of the marker
             val cameraPosition = CameraPosition.Builder().target(amrita).zoom(12f).build()
             googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-
+            
         })
 
         return myInflatedMapView
@@ -149,7 +154,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 
          Location.distanceBetween(startLat,startLong,endLat,endLong,results)
 
-        Toast.makeText(context,"Distance: " + results[0], Toast.LENGTH_SHORT).show()
+        Toast.makeText(context,"Distance: " + results[0]/1000 + " km", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -181,7 +186,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
             }
 
             if (addressList!!.isNotEmpty()) {
-                
+
                 marker?.remove()
                 address = addressList!!.get(0)
 
@@ -198,6 +203,9 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 
                 googleMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             }
+
+            else if(addressList!!.isEmpty())
+                Toast.makeText(context,"Invalid input Location",Toast.LENGTH_SHORT).show()
         }
             else
                 Toast.makeText(context,"Invalid input Location",Toast.LENGTH_SHORT).show()
@@ -264,7 +272,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
     override fun onConnectionFailed(p0: ConnectionResult) {
     }
 
-    private fun getDestination(){
+    private fun locationDialog(){
 
         val addAmountDialog = AlertDialog.Builder(activity)
         var linearLayout:LinearLayout?=null
@@ -272,22 +280,11 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
         linearLayout.setOrientation(LinearLayout.VERTICAL)
         with(addAmountDialog){
 
-            mStartLocation = EditText(context)
-            mStartLocation!!.hint="From"
-            mStartLocation!!.inputType = InputType.TYPE_CLASS_TEXT
-            linearLayout.addView(mStartLocation)
-
-
-            mEndLocation = EditText(context)
-            mEndLocation!!.hint="To"
-            mEndLocation!!.inputType = InputType.TYPE_CLASS_TEXT
-            linearLayout.addView(mEndLocation)
-
-            setPositiveButton("Add"){
+            setPositiveButton("Ok"){
                 dialog, which ->
                 dialog.dismiss()
                // mySnackbar!!.show()
-
+                enableGPS()
             }
 
             setNegativeButton("Cancel"){
@@ -300,6 +297,7 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
 
         //Pops up the dialog box
         val dialog = addAmountDialog.create()
+        dialog.setMessage("Turn On Location?")
         dialog.setView(linearLayout)
         dialog.show()
     }
@@ -342,6 +340,18 @@ class HomeFragment:Fragment(),LocationListener,GoogleApiClient.ConnectionCallbac
                 }
             }
         }
+    }
+
+    private fun isGPSEnabled(): Boolean {
+
+            val  service = context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+             return service!!.isProviderEnabled(LocationManager.GPS_PROVIDER)//isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    private fun enableGPS(){
+
+               val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent)
     }
 
 
