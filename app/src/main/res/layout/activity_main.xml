@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
     android:layout_alignParentBottom="true"
-    android:background="@drawable/taxi_background_1"
+    android:background="@android:color/holo_blue_dark"
     tools:context="com.example.sreenu.login.MainActivity">
 
 
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_margin="10dp"
-            android:background="@drawable/rounded_background"
+
             android:drawableLeft="@drawable/username"
             android:drawablePadding="10dp"
             android:ems="20"
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_margin="10dp"
-            android:background="@drawable/rounded_background"
+            
             android:drawableLeft="@drawable/password"
             android:drawablePadding="10dp"
             android:ems="20"
@@ -71,6 +71,15 @@
             android:text="Not a User? Sign in."
             android:textColor="#1b1b1b"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/forgot_password"
+            android:layout_margin="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgot_password"
+            android:textColor="@android:color/black"
+            />
 
     </LinearLayout>
 
