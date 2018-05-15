@@ -25,11 +25,14 @@ private var mDataBase: FirebaseDatabase? = null
 private var mAuth: FirebaseAuth? = null
 private var mProgressBar:ProgressDialog?=null
 private var user:FirebaseUser?=null
+private var currentPassword:String?=null
 
 class ProfileFragment : Fragment() {
 
+    private var dialogCurrentPassword:String?=null
     private var emailId:TextView?=null
     private var profileName: TextView?=null
+    private var etCurrentPassword:EditText?=null
     private var passwordResetButton:Button?=null
     private var myInflatedProfileView:View?=null
     private var password:String?=null
@@ -41,6 +44,7 @@ class ProfileFragment : Fragment() {
          emailId  = myInflatedProfileView!!.findViewById(R.id.profile_email) as TextView
          profileName = myInflatedProfileView!!.findViewById(R.id.profile_name) as TextView
          passwordResetButton = myInflatedProfileView!!.findViewById(R.id.password_reset_button) as Button
+
 
          mAuth = FirebaseAuth.getInstance()
          mProgressBar = ProgressDialog(context)
@@ -86,9 +90,12 @@ class ProfileFragment : Fragment() {
         val addAmountDialog = AlertDialog.Builder(activity)
 
         val mView = layoutInflater.inflate(R.layout.newpassworddialog,null)
-        val password = mView.findViewById(R.id.dialog_new_password) as EditText
+        val newPassword = mView.findViewById(R.id.dialog_new_password) as EditText
         val confirmButton = mView.findViewById(R.id.new_password_confirm_button)as Button
         val cancelButton = mView.findViewById(R.id.cancel_button) as Button
+        etCurrentPassword = mView.findViewById(R.id.dialog_current_password) as EditText
+
+
 
         val dialog = addAmountDialog.create()
         dialog.setView(mView)
@@ -96,29 +103,51 @@ class ProfileFragment : Fragment() {
 
         val mUser = mAuth!!.currentUser
         user = FirebaseAuth.getInstance().currentUser
+        val uid = user!!.uid
+
+
+
+        mDataBaseReference!!.addListenerForSingleValueEvent(object :ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot?) {
+
+              currentPassword = datasnapshot!!.child(uid).child("password").value.toString()
+
+
+            }
+
+            override fun onCancelled(p0: DatabaseError?) {
+
+            }
+        })
+
 
         confirmButton.setOnClickListener {
+            dialogCurrentPassword = etCurrentPassword!!.text.toString()
+            passwordText = newPassword.text.toString()
+            Log.i("newPassword",passwordText)
+            //Log.i("Current Password", dialogCurrentPassword + "newPassword" + passwordText )
+            if (currentPassword!!.equals(dialogCurrentPassword)) {
 
-            passwordText = password.text.toString()
-
-            mUser!!.updatePassword(passwordText!!).addOnCompleteListener { task ->
-                if(task.isSuccessful)
-                {   mProgressBar!!.hide()
-                    Toast.makeText(context,R.string.updated_password,Toast.LENGTH_SHORT).show()
+                mUser!!.updatePassword(passwordText!!).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        mProgressBar!!.hide()
+                        Toast.makeText(context, R.string.updated_password, Toast.LENGTH_SHORT).show()
+                    } else {
+                        mProgressBar!!.hide()
+                        Toast.makeText(context, task.exception!!.localizedMessage.toString(), Toast.LENGTH_SHORT).show()
+                    }
                 }
 
-                else{
-                    mProgressBar!!.hide()
-                    Toast.makeText(context,task.exception!!.localizedMessage.toString(),Toast.LENGTH_SHORT).show()
-                }
             }
 
-
+            else {
+                Toast.makeText(context!!,R.string.wrong_password,Toast.LENGTH_SHORT).show()
             }
+        }
 
             mProgressBar!!.hide()
-            Toast.makeText(context,"Success", Toast.LENGTH_SHORT).show()
-        
+
+
 
         cancelButton.setOnClickListener {
             dialog.hide()
